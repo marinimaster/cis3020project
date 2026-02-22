@@ -22,7 +22,7 @@ app.use(
 
 function requireAuth(request, response, next){
     if(!request.session.user){
-        return response.redirect("/login.html");
+        return response.redirect("/index.html");
     };
 
     next();
@@ -50,7 +50,7 @@ app.get("/api/login/", (request, response) => {
 });
 app.get("/logout", (request, response) => {
     request.session.destroy(() => {
-        response.redirect("/login.html");
+        response.redirect("/index.html");
     });
 });
 
@@ -67,7 +67,7 @@ app.post("/api/login", (request, response) => {
         return response.redirect("/dashboard")
     }
 
-    return response.status(401).redirect("/login.html?error=invalid-credentials");
+    return response.status(401).redirect("/index.html?error=invalid-credentials");
 });
 
 app.listen(PORT, () => {
