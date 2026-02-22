@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Login</title>
+</head>
+
+<body class="body-login">
+
+    <header>
+        <div class="leftheaderdiv">
+            <h1>Dashboard</h1>
+        </div>
+
+        <nav class="navbar">
+
+            <div class="navitem">Home</div>
+            <div class="navitem">Bill</div>
+            <div class="navitem">Contact</div>
+
+        </nav>
+
+        <div class="rightheaderdiv">
+        </div>
+    </header>
+
+    <main class="main-dashboard">
+        <form class="login-form" method="POST" action="/api/login">
+            <h3>Login</h3>
+            <input class="login-input" type="text" name="username" placeholder="Enter username" />
+            <input class="login-input" type="password" name="password" placeholder="Password" />
+            <input class="login-input" type="submit" name="submit">
+
+            <p id="error-message"></p>
+        </form>
+    </main>
+
+    <footer>
+
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+
+</html>

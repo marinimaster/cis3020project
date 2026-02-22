@@ -1,0 +1,117 @@
+* {
+    font-family: "Zalando Sans", sans-serif;
+    font-family: "Zalando Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+
+    margin: 0;
+    padding: 0;
+}
+body {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 75px 1fr 50px;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+        "header header"
+        "aside main"
+        "footer footer";
+}
+
+.body-login{
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 75px 1fr 50px;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+        "header header"
+        "main main"
+        "footer footer";
+}
+
+header {
+    color: white;
+    width: 100%;
+    grid-area: header;
+    background-color: #575FFF;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-rows: auto;
+    grid-template-columns: 200px auto 300px;
+}
+
+.leftheaderdiv {
+    font-size: 15px;
+    margin: 10px;
+    justify-self: start;
+    align-self: end;
+    justify-content: end;
+}
+
+.navbar {
+    font-size: 15px;
+    align-self: end;
+    display: grid;
+    grid-template-columns: 150px 150px 150px;
+    gap: 100px;
+}
+
+.navitem {
+    font-size: 15px;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rightheaderdiv{
+    font-size: 15px;
+    display:grid;
+    align-self: end;
+    justify-content: end;
+    grid-template-columns: 150px;
+}
+
+aside {
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: black;
+    grid-area: aside;
+}
+
+main {
+    grid-area: main;
+}
+
+.main-dashboard{
+    grid-area: main;
+    display:grid;
+    align-items: center;
+    justify-items: center;
+}
+
+footer {
+    width: 100%;
+    grid-area: footer;
+    background-color: #57B3FF;
+}
+
+
+.login-form {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 300px;
+    background-color: #575FFF;
+    border: 1px solid #32378b;
+}
+
+.login-input {
+    height: 35px;
+    width: 250px;
+}
