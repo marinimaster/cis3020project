@@ -1,8 +1,10 @@
 import express from 'express';
 import session from 'express-session';
 import path from 'path';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 import { users } from './utils/users.mjs';
+import { verifyPassword } from './utils/verify.mjs';
+import { hashPassword } from './utils/hash.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,18 +12,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static("."));
-app.use(express.urlencoded( {extended: true}) );
+app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
         secret: "CYpR3Ss%010509",
         resave: false,
         saveUninitialized: true,
-        cookie: {secure: false}
+        cookie: { secure: false }
     })
 );
 
-function requireAuth(request, response, next){
-    if(!request.session.user){
+function requireAuth(request, response, next) {
+    if (!request.session.user) {
         return response.redirect("/index.html");
     };
 
@@ -29,19 +31,19 @@ function requireAuth(request, response, next){
 };
 
 app.get("/dashboard", requireAuth, (request, response) => {
-    response.sendFile(path.join(__dirname, '..','private', 'dashboard.html'));
+    response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
 });
 app.get("/api/users", (request, response) => {
     response.send(users);
 });
 app.get("/api/login/", (request, response) => {
-    const {username, password} = request.query;
+    const { username, password } = request.query;
 
     const userVerified = users.find(
-        (u) => u.username === username && u.password === password 
+        (u) => u.username === username && u.password === password
     );
 
-    if(userVerified) {
+    if (userVerified) {
         request.session.user = userVerified;
         console.log(request.query)
         return response.send("Fake dashboard");
@@ -55,19 +57,25 @@ app.get("/logout", (request, response) => {
 });
 
 //POST
-app.post("/api/login", (request, response) => {
-    const {username, password} = request.body;
+app.post("/api/login", async (request, response) => {
+    const { username, password } = request.body;
 
     const userVerified = users.find(
-        (u) => u.username === username && u.password === password
+        (u) => u.username === username
     );
 
-    if(userVerified){
-        request.session.user = { username: userVerified.username };
-        return response.redirect("/dashboard")
+    if (!userVerified) {
+        return response.status(401).redirect("/index.html?error=invalid-credentials");
     }
 
-    return response.status(401).redirect("/index.html?error=invalid-credentials");
+    const isMatch = await verifyPassword(password, userVerified.password);
+
+    if(!isMatch){
+        return response.status(401).redirect("/index.html?error=invalid-credentials");
+    }
+
+    request.session.user = { username: userVerified.username };
+    return response.redirect("/dashboard")
 });
 
 app.listen(PORT, () => {

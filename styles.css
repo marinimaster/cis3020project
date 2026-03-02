@@ -1,13 +1,15 @@
 * {
     font-family: "Zalando Sans", sans-serif;
-    font-family: "Zalando Sans", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
+
+    box-sizing: border-box;
 
     margin: 0;
     padding: 0;
 }
 body {
+    background-color: #f5f7fb;
     min-height: 100vh;
     display: grid;
     grid-template-rows: 75px 1fr 50px;
@@ -22,39 +24,34 @@ body {
     min-height: 100vh;
     display: grid;
     grid-template-rows: 75px 1fr 50px;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
         "header header"
-        "main main"
+        "aside main"
         "footer footer";
 }
 
 header {
-    color: white;
-    width: 100%;
     grid-area: header;
     background-color: #575FFF;
-    display: grid;
+    color: white;
+
+    display: flex;
     align-items: center;
-    justify-items: center;
-    grid-template-rows: auto;
-    grid-template-columns: 200px auto 300px;
+    justify-content: space-between;
 }
 
 .leftheaderdiv {
     font-size: 15px;
     margin: 10px;
-    justify-self: start;
     align-self: end;
-    justify-content: end;
+    justify-content: start;
+    align-items: start;
 }
 
 .navbar {
-    font-size: 15px;
-    align-self: end;
-    display: grid;
-    grid-template-columns: 150px 150px 150px;
-    gap: 100px;
+    display: flex;
+    gap: 40px;
 }
 
 .navitem {
@@ -73,11 +70,10 @@ header {
     grid-template-columns: 150px;
 }
 
-aside {
-    border-right-width: 1px;
-    border-right-style: solid;
-    border-right-color: black;
-    grid-area: aside;
+.login-aside {
+    background-color: white;
+    border-right: 1px solid #e5e7eb;
+    padding: 30px 20px;
 }
 
 main {
@@ -95,23 +91,116 @@ footer {
     width: 100%;
     grid-area: footer;
     background-color: #57B3FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: white;
 }
 
 
 .login-form {
-    color: white;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    width: 300px;
-    height: 300px;
-    background-color: #575FFF;
-    border: 1px solid #32378b;
+    gap: 30px;
+
+    width: 500px;
+    padding: 40px;
+
+    color:rgb(0, 0, 0);
+    background-color: #ffffff;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.login-form h3{
+    font-size:30px;
+    font-weight:600;
+}
+
+.form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgb(0, 0, 0);
 }
 
 .login-input {
-    height: 35px;
-    width: 250px;
+    height: 50px;
+    width: 100%;
+    padding: 0 10px;
+
+    background-color: #f8f8f8;
+    border: 2px solid rgb(240, 240, 240);
+}
+
+.login-submit {
+    height: 50px;
+    width: 100%;
+
+    background-color: white;
+    color: #575FFF;
+
+    border: none;
+    border-radius: 6px;
+
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/*DASHBOARD*/
+
+aside {
+    background-color: white;
+    border-right: 1px solid #e5e7eb;
+    padding: 30px 20px;
+}
+
+aside h3{
+    font-weight: 600;
+}
+
+.dashboard-main {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.dashboard-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card h3 {
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+}
+
+.card p {
+    font-size: 22px;
+    font-weight: 600;
 }

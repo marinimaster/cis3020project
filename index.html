@@ -12,33 +12,41 @@
 
     <header>
         <div class="leftheaderdiv">
-            <h1>Dashboard</h1>
+            <h1>Polylearning</h1>
         </div>
 
-        <nav class="navbar">
-
-            <div class="navitem">Home</div>
-            <div class="navitem">Bill</div>
-            <div class="navitem">Contact</div>
-
-        </nav>
-
-        <div class="rightheaderdiv">
-        </div>
     </header>
 
-    <main class="main-dashboard">
-        <form class="login-form" method="POST" action="https://cis3020project.onrender.com/api/login">
-            <h3>Login</h3>
-            <input class="login-input" type="text" name="username" placeholder="Enter username" />
-            <input class="login-input" type="password" name="password" placeholder="Password" />
-            <input class="login-input" type="submit" name="submit">
+    <aside class="login-aside">
 
+    </aside>
+
+    <main class="main-dashboard">
+
+        <!--deployed action: https://cis3020project.onrender.com/api/login-->
+        <form class="login-form" method="POST" action="https://cis3020project.onrender.com/api/login">
+
+            <h3>Login</h3>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input class="login-input" type="text" id="username" name="username" placeholder="Enter username"
+                    required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input class="login-input" type="password" id="password" name="password" placeholder="Enter password"
+                    required />
+            </div>
+
+            <input class="login-submit" type="submit" value="Sign In">
             <p id="error-message"></p>
+
         </form>
     </main>
 
-    <footer>
+    <footer class="footer-dashboard">
 
     </footer>
 
