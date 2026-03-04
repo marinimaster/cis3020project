@@ -12,9 +12,9 @@ export const users = [
 //returns a boolean
 await verifyPassword('1234', users[0].password);
 
+
 /*
 Passwords:
-
 admin: 1234
 mario: plumber
 astrid: shield

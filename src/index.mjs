@@ -2,16 +2,19 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { users } from './utils/users.mjs';
+import bcrypt from 'bcrypt'
+import { users } from './utils/users.mjs'; // no longer needed
 import { verifyPassword } from './utils/verify.mjs';
-import { hashPassword } from './utils/hash.mjs';
+import { getUsers } from './utils/userController.mjs';
+import pool from './utils/db.mjs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 app.use(express.static("public"));
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(
     session({
@@ -33,22 +36,21 @@ function requireAuth(request, response, next) {
 app.get("/dashboard", requireAuth, (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
 });
+
 app.get("/api/users", (request, response) => {
     response.send(users);
 });
-app.get("/api/login/", (request, response) => {
-    const { username, password } = request.query;
 
-    const userVerified = users.find(
-        (u) => u.username === username && u.password === password
+app.get("/api/students", async (request, response) => {
+    
+    const result = await pool.query(
+        'SELECT * FROM app.users'
     );
 
-    if (userVerified) {
-        request.session.user = userVerified;
-        console.log(request.query)
-        return response.send("Fake dashboard");
-    }
-    return response.status(401).send("Invalid credentials. (GET)");
+    const studentCount = result.rowCount;
+
+    response.send(studentCount);
+
 });
 app.get("/logout", (request, response) => {
     request.session.destroy(() => {
@@ -56,8 +58,34 @@ app.get("/logout", (request, response) => {
     });
 });
 
-//POST
+// ---------------------POST---------------------------
+
 app.post("/api/login", async (request, response) => {
+    const { username, password } = request.body;
+
+    const result = await pool.query(
+        'SELECT * FROM app.users WHERE username = $1', [username]
+    );
+
+    const userAmount = result.rows.length;
+
+    if(result.rows.length === 0){
+        return response.status(404).send('User not found.')
+    }
+
+    //Password validation
+    const hash = result.rows[0].password;
+    const isMatch = await bcrypt.compare(password, hash);
+
+    if(!isMatch){
+        return response.status(403).send('Invalid credentials');
+    }
+
+    request.session.user = { username: result.rows[0].username };
+    response.status(200).send(userAmount);
+});
+
+/*app.post("/api/login", async (request, response) => {
     const { username, password } = request.body;
 
     const userVerified = users.find(
@@ -76,7 +104,8 @@ app.post("/api/login", async (request, response) => {
 
     request.session.user = { username: userVerified.username };
     return response.redirect("/dashboard")
-});
+});*/
+
 
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);

@@ -99,7 +99,7 @@ footer {
 }
 
 
-.login-form {
+#login-form {
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -112,7 +112,7 @@ footer {
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-.login-form h3{
+#login-form h3{
     font-size:30px;
     font-weight:600;
 }
