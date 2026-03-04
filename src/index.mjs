@@ -2,10 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import bcrypt from 'bcrypt'
-import { users } from './utils/users.mjs'; // no longer needed
-import { verifyPassword } from './utils/verify.mjs';
-import { getUsers } from './utils/userController.mjs';
+import bcrypt from 'bcrypt';
 import pool from './utils/db.mjs';
 
 const app = express();
