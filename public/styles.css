@@ -31,7 +31,11 @@ body {
         "footer footer";
 }
 
-header {
+/* =========================
+   Header Layout System
+========================= */
+
+.app-header {
     grid-area: header;
     background-color: #575FFF;
     color: white;
@@ -39,36 +43,52 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    padding: 0 30px;
 }
 
-.leftheaderdiv {
-    font-size: 15px;
-    margin: 10px;
-    align-self: end;
-    justify-content: start;
-    align-items: start;
+.brand h1 {
+    font-size: 18px;
+    font-weight: 600;
 }
 
-.navbar {
+.header-subtitle {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+/* Navigation */
+
+.primary-nav ul {
+    list-style: none;
     display: flex;
-    gap: 40px;
+    gap: 35px;
 }
 
-.navitem {
-    font-size: 15px;
-    margin: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.primary-nav a {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-.rightheaderdiv{
-    font-size: 15px;
-    display:grid;
-    align-self: end;
-    justify-content: end;
-    grid-template-columns: 150px;
+/* Utility Section */
+
+.utility .logout-link {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
 }
+
+/* Login Header Variant */
+
+.login-header {
+    justify-content: flex-start;
+}
+
 
 .login-aside {
     background-color: white;
@@ -159,10 +179,17 @@ aside {
     background-color: white;
     border-right: 1px solid #e5e7eb;
     padding: 30px 20px;
+    justify-items: start;
 }
 
 aside h3{
     font-weight: 600;
+}
+
+aside .asideitem {
+    margin-top: 15px;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .dashboard-main {

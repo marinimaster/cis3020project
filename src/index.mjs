@@ -34,17 +34,13 @@ app.get("/dashboard", requireAuth, (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
 });
 
-app.get("/api/users", (request, response) => {
-    response.send(users);
-});
-
 app.get("/api/students", async (request, response) => {
     
     const result = await pool.query(
-        'SELECT * FROM app.users'
+        'SELECT COUNT (*) FROM app.users WHERE role = $1', ['standard']
     );
 
-    const studentCount = result.rowCount;
+    const studentCount = result.rows[0].count;
 
     response.send(studentCount);
 
