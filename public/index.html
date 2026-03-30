@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <title>Login</title>
 </head>
 
@@ -14,7 +14,7 @@
 
         <div class="brand">
             <h1>Polylearning</h1>
-            <span class="header-subtitle">Administrator Access</span>
+            <span class="header-subtitle" id="header-subtitle">Standard User Access</span>
         </div>
 
     </header>
@@ -24,11 +24,18 @@
     </aside>
 
     <main class="main-dashboard">
+        <!-- https://cis3020project.onrender.com -->
+        <form id="login-form" method="POST" action="https://cis3020project.onrender.com/api/login/standard">
 
-        <!--deployed action: https://cis3020project.onrender.com/api/login-->
-        <form id="login-form" method="POST" action="https://cis3020project.onrender.com/api/login">
+            <h3 id="login-title">Standard Login</h3>
 
-            <h3>Login</h3>
+            <div class="form-group">
+                <label for="login-role">Login Type</label>
+                <select class="login-input" id="login-role" name="loginRole">
+                    <option value="standard" selected>Standard User</option>
+                    <option value="admin">Admin Login</option>
+                </select>
+            </div>
 
             <div class="form-group">
                 <label for="username">Username</label>
@@ -52,7 +59,7 @@
 
     </footer>
 
-    <script src="index.js"></script>
+    <script src="/index.js"></script>
 </body>
 
 </html>

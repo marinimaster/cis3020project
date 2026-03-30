@@ -22,20 +22,30 @@ app.use(
     })
 );
 
-function requireAuth(request, response, next) {
-    if (!request.session.user) {
-        return response.redirect("/index.html");
+function requireRole(role) {
+    return (request, response, next) => {
+        if (!request.session.user) {
+            return response.redirect("/index.html");
+        }
+
+        if (request.session.user.role !== role) {
+            return response.sendStatus(403);
+        }
+
+        next();
     };
+}
 
-    next();
-};
-
-app.get("/dashboard", requireAuth, (request, response) => {
+app.get("/dashboard", requireRole("standard"), (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
 });
 
-app.get("/api/students", async (request, response) => {
-    
+app.get("/admin/dashboard", requireRole("admin"), (request, response) => {
+    response.sendFile(path.join(__dirname, '..', 'private', 'admin-dashboard.html'));
+});
+
+app.get("/api/students", requireRole("admin"), async (request, response) => {
+
     const result = await pool.query(
         'SELECT COUNT (*) FROM app.users WHERE role = $1', ['standard']
     );
@@ -53,52 +63,59 @@ app.get("/logout", (request, response) => {
 
 // ---------------------POST---------------------------
 
-app.post("/api/login", async (request, response) => {
+app.post("/api/login/standard", async (request, response) => {
     const { username, password } = request.body;
 
-    const result = await pool.query(
+    const user = await pool.query(
         'SELECT * FROM app.users WHERE username = $1', [username]
     );
 
-    const userAmount = result.rows.length;
-
-    if(result.rows.length === 0){
-        return response.status(404).send('User not found.')
+    if(user.rows.length === 0){
+        return response.sendStatus(404);
     }
 
     //Password validation
-    const hash = result.rows[0].password;
+    const hash = user.rows[0].password;
     const isMatch = await bcrypt.compare(password, hash);
 
     if(!isMatch){
-        return response.status(403).send('Invalid credentials');
+        return response.sendStatus(403);
     }
 
-    request.session.user = { username: result.rows[0].username };
-    response.status(200).send(userAmount);
+    request.session.user = {
+        id: user.rows[0].id,
+        username: user.rows[0].username,
+        role: user.rows[0].role
+    };
+
+    response.sendStatus(200);
 });
 
-/*app.post("/api/login", async (request, response) => {
-    const { username, password } = request.body;
+app.post("/api/login/admin", async (request, response) => {
+    const { username , password } = request.body;
 
-    const userVerified = users.find(
-        (u) => u.username === username
+    const user = await pool.query(
+        'SELECT * FROM app.users WHERE username = $1', [username]
     );
 
-    if (!userVerified) {
-        return response.status(401).redirect("/index.html?error=invalid-credentials");
+    if(!user){
+        return response.sendStatus(404);
     }
 
-    const isMatch = await verifyPassword(password, userVerified.password);
+    const hash = user.rows[0].password;
+    const isMatch = await bcrypt.compare(password, hash);
 
     if(!isMatch){
-        return response.status(401).redirect("/index.html?error=invalid-credentials");
+        return response.sendStatus(403);
     }
 
-    request.session.user = { username: userVerified.username };
-    return response.redirect("/dashboard")
-});*/
-
+    request.session.user = {
+        id: user.rows[0].id,
+        username: user.rows[0].username,
+        role: user.rows[0].role
+    }
+    response.sendStatus(200);
+});
 
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);

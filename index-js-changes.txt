@@ -1,0 +1,131 @@
+• I’m pulling the current line numbers from public/index.js so I can explain the new parts precisely and map them to the
+  login split.
+
+• Explored
+  └ Read index.js
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The main change in public/index.js is that it no longer assumes there is only one kind of login. Before, it always
+  posted to the admin endpoint and always redirected to /dashboard. Now it adapts to whether the user selected standard
+  or admin.
+
+  What Each Section Does
+
+  Lines public/index.js:1 collect references to elements on the page.
+
+  - window.location.search is the query string from the URL, like ?error=invalid-credentials.
+  - URLSearchParams makes that easy to read.
+  - getElementById(...) stores references to the form and UI pieces so the script can update them later.
+  - studentCountTag is still used on the admin dashboard.
+  - loginRoleSelect, loginTitle, and headerSubtitle are new because the login page now changes based on the selected
+    login type.
+
+  Lines public/index.js:10 define loginConfig.
+
+  This is just a lookup object. Instead of hardcoding values in multiple places, it keeps each login mode in one place:
+
+  - standard uses /api/login/standard, redirects to /dashboard, and changes the text to standard-user wording.
+  - admin uses /api/login/admin, redirects to /admin/dashboard, and changes the text to admin wording.
+
+  That makes the rest of the script cleaner, because it can ask: "What mode is selected?" and then use the right values
+  automatically.
+
+  Lines public/index.js:25 are the new updateLoginMode() function.
+
+  This is the biggest new concept. Its job is to keep the page in sync with the current dropdown selection.
+
+  It does four things:
+
+  - Reads the selected login role from the <select>.
+  - Sets loginForm.action to the correct endpoint.
+  - Changes the form heading, like Standard Login or Admin Login.
+  - Changes the subtitle in the header.
+
+  It also clears any old error message when the mode changes. That avoids showing an admin login error after someone
+  switches back to standard login.
+
+  The return selectedMode; at the end is important. It lets other code reuse the selected mode instead of recalculating
+  it.
+
+  Lines public/index.js:49 run when the page finishes loading.
+
+  This does two separate jobs:
+
+  - If studentCountTag exists, it fetches /api/students and fills in the admin dashboard card.
+  - It calls updateLoginMode() once at startup so the login page displays the correct default values immediately.
+
+  The try/catch around the student count fetch is new defensive handling. Before, if the request failed, the script
+  could break or leave nothing visible. Now it shows "Unavailable" instead.
+
+  Lines public/index.js:67 attach a change event to the login dropdown.
+
+  That means whenever the user switches from standard to admin or back, updateLoginMode() runs again and updates the
+  page text and target endpoint.
+
+  Lines public/index.js:71 handle form submission.
+
+  This is still the same overall pattern as before, but more dynamic:
+
+  - e.preventDefault() stops the browser from doing a normal HTML form submit.
+  - new FormData(loginForm) reads the form fields.
+  - Object.fromEntries(...) converts those fields into a normal JS object like:
+
+  { loginRole: "admin", username: "x", password: "y" }
+
+  Then this line matters most:
+
+  const selectedMode = updateLoginMode();
+
+  That gives the submit handler the current mode object from loginConfig, so it knows exactly where to send the request
+  and where to redirect afterward.
+
+  Then it sends:
+
+  fetch(selectedMode.endpoint, { ... })
+
+  So the endpoint is no longer hardcoded.
+
+  If login succeeds:
+
+  - standard goes to /dashboard
+  - admin goes to /admin/dashboard
+
+  If login fails:
+
+  - 501 shows "Login endpoint not implemented yet."
+  - anything else shows "Invalid Credentials"
+
+  I added the 501 case because your backend endpoints are currently placeholders.
+
+  Lines public/index.js:101 preserve your previous URL error handling.
+
+  If the URL contains an error query parameter, it writes "Invalid Credentials" into the page. That part is still
+  simple, but now it safely checks that errorMessage exists first.
+
+  Why These Changes Were Needed
+
+  The old script assumed:
+
+  - only one login type existed
+  - only one endpoint existed
+  - only one dashboard existed
+
+  Once you asked for both standard and admin login from the same page, the JS needed a way to:
+
+  - switch endpoint
+  - switch redirect
+  - switch displayed text
+
+  That is why loginConfig and updateLoginMode() were added.
+
+  Two Small JS Concepts You May Not Fully Know Yet
+
+  Object.fromEntries(formData.entries())
+  This converts form fields into a plain object. It is a common way to turn a form into JSON-ready data.
+
+  response.ok
+  This is just a boolean shortcut. It means the HTTP status is in the success range, usually 200-299.
+
+  If you want, I can do the same kind of walkthrough for src/index.mjs next, especially the route guard and the empty
+  login endpoints.
