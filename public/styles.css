@@ -240,6 +240,10 @@ aside .asideitem:hover {
     font-weight: 600;
 }
 
+.create-user{
+    width: 300px;
+}
+
 .billing-card{
     max-width: 250px;
 }
@@ -252,4 +256,19 @@ a{
     cursor:pointer;
     all: unset;
     text-decoration: none;
+}
+
+#create-user-form{
+    gap: 3px;
+    display: flex;
+    flex-direction: column;
+}
+
+#create-user-form input{
+    height: 30px;
+    width: 100%;
+    padding: 0 10px;
+
+    background-color: #f8f8f8;
+    border: 2px solid rgb(240, 240, 240);
 }

@@ -29,12 +29,44 @@ function requireRole(role) {
         }
 
         if (request.session.user.role !== role) {
-            return response.status(403).redirect("/index.html?error");
+            return response.redirect("/index.html");
         }
 
         next();
     };
 }
+
+async function loginHandler(request, response, expectedRole) {
+    const { username, password } = request.body;
+
+    const user = await pool.query(
+        'SELECT * FROM app.users WHERE username = $1', [username]
+    );
+
+    if (user.rows.length === 0) {
+        return response.sendStatus(404);
+    }
+
+    //Password validation
+    const hash = user.rows[0].password;
+    const isMatch = await bcrypt.compare(password, hash);
+
+    //Role Validation
+    const role = user.rows[0].role;
+    const roleMatch = role === expectedRole;
+
+    if (!isMatch || !roleMatch) {
+        return response.sendStatus(403);
+    }
+
+    request.session.user = {
+        id: user.rows[0].id,
+        username: user.rows[0].username,
+        role: user.rows[0].role
+    };
+
+    response.status(200).send("Validated");
+};
 
 app.get("/dashboard", requireRole("standard"), (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
@@ -46,6 +78,10 @@ app.get("/billing", requireRole("standard"), (request, response) => {
 
 app.get("/admin/dashboard", requireRole("admin"), (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'admin-dashboard.html'));
+});
+
+app.get("/admin/manage-users", requireRole("admin"), (request, response) => {
+    response.sendFile(path.join(__dirname, '..', 'private', 'manage-users.html'));
 });
 
 app.get("/api/students", requireRole("admin"), async (request, response) => {
@@ -88,57 +124,54 @@ app.get("/logout", (request, response) => {
 // ---------------------POST---------------------------
 
 app.post("/api/login/standard", async (request, response) => {
-    const { username, password } = request.body;
-
-    const user = await pool.query(
-        'SELECT * FROM app.users WHERE username = $1', [username]
-    );
-
-    if(user.rows.length === 0){
-        return response.sendStatus(404);
-    }
-
-    //Password validation
-    const hash = user.rows[0].password;
-    const isMatch = await bcrypt.compare(password, hash);
-
-    if(!isMatch){
-        return response.sendStatus(403);
-    }
-
-    request.session.user = {
-        id: user.rows[0].id,
-        username: user.rows[0].username,
-        role: user.rows[0].role
-    };
-
-    response.status(200).send("Validated");
+    loginHandler(request, response, 'standard');
 });
 
 app.post("/api/login/admin", async (request, response) => {
-    const { username , password } = request.body;
+    loginHandler(request, response, 'admin');
+});
 
-    const user = await pool.query(
-        'SELECT * FROM app.users WHERE username = $1', [username]
-    );
+app.post("/admin/create-user", async (request, response) => {
+    const { username, password } = request.body;
+    const hash = await bcrypt.hash(password, 12)
 
-    if(!user){
-        return response.sendStatus(404);
+    try {
+        //----------------BEGIN IS NEEDED TO ROLLBACK-------------------------------------
+        await pool.query('BEGIN');
+
+        const findUser = await pool.query(
+            'SELECT * FROM app.users WHERE username = $1', [username]
+        );
+
+        //----------IMPORTANT TO FIND USER IF USER EXISTS FIRST-------------------------
+        if(findUser.rows.length > 0){
+            await pool.query('ROLLBACK');
+            return response.status(403).json('User already exists');
+        }
+
+        //------------------IF IT DOESN'T, WE INSERT----------------------------
+        const insertUser = await pool.query(
+            'INSERT INTO app.users (username, password) VALUES ($1, $2) RETURNING id', [username, hash]
+        );
+
+        //'RETURNING id' makes it so it returns the ID as soon as it's created
+        //so it can be used like below
+        //                                   here
+        const newUserId = insertUser.rows[0].id;
+
+        await pool.query(
+            'INSERT INTO app.wallets (user_id) VALUES ($1)', [newUserId]
+        );
+
+        await pool.query('COMMIT');
+        
+        return response.status(200).json('User Created')
     }
-
-    const hash = user.rows[0].password;
-    const isMatch = await bcrypt.compare(password, hash);
-
-    if(!isMatch){
-        return response.sendStatus(403);
+    catch (error) {
+        await pool.query('ROLLBACK');
+        console.error(error);
+        response.status(500).json('Server Error');
     }
-
-    request.session.user = {
-        id: user.rows[0].id,
-        username: user.rows[0].username,
-        role: user.rows[0].role
-    }
-    response.sendStatus(200);
 });
 
 app.listen(PORT, () => {

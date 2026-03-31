@@ -9,23 +9,24 @@
         rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/styles.css">
     <link rel="stylesheet" href="/styles.css">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard Template</title>
 </head>
 
 <body>
-<header class="app-header">
+    <header class="app-header">
 
-    <div class="brand">
-        <h1>Polylearning</h1>
-        <span class="header-subtitle">Administration Panel</span>
-    </div>
+        <div class="brand">
+            <h1>Polylearning</h1>
+            <span class="header-subtitle">Administration Panel</span>
+        </div>
 
-    <div class="utility">
-        <a href="/logout" class="logout-link">Logout</a>
-    </div>
+        <div class="utility">
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
 
-</header>
+    </header>
 
     <aside>
         <section class="aside-header">
@@ -33,7 +34,8 @@
         </section>
 
         <div class="asideitem"><a href="/admin/dashboard">Billing Overview</a></div>
-        <div class="asideitem"><a href="/admin/manage-users">Manage Users</a></div>
+        <div class="asideitem">Manage Users</div>
+        <div class="asideitem"><a href="/admin/manage-users">Create User</a></div>
     </aside>
 
     <main class="dashboard-main">

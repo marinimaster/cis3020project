@@ -8,6 +8,7 @@ const headerSubtitle = document.getElementById('header-subtitle');
 const errorMessage = document.getElementById('error-message');
 const balanceTag = document.getElementById('card-balance');
 const revenueTag = document.getElementById('revenue');
+const createUserForm = document.getElementById('create-user-form')
 
 const loginConfig = {
     standard: {
@@ -49,6 +50,23 @@ function updateLoginMode() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (createUserForm) {
+        createUserForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(createUserForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch("/admin/create-user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            console.log(await response.json());
+        });
+    }
+
     if (studentCountTag) {
         try {
             const response = await fetch('/api/students', {
@@ -58,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const studentCount = await response.json();
             studentCountTag.textContent = studentCount;
-            
+
         } catch {
             studentCountTag.textContent = 'Unavailable';
         }
@@ -106,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const balance = await response.json();
             balanceTag.textContent = balance;
-            
+
         } catch {
             balanceTag.textContent = 'Unavailable';
         }
@@ -123,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const revenue = await response.json();
             revenueTag.textContent = revenue;
-            
+
         } catch {
             revenueTag.textContent = 'Unavailable';
         }
