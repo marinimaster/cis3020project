@@ -29,7 +29,7 @@ function requireRole(role) {
         }
 
         if (request.session.user.role !== role) {
-            return response.sendStatus(403);
+            return response.status(403).redirect("/index.html?error");
         }
 
         next();
@@ -38,6 +38,10 @@ function requireRole(role) {
 
 app.get("/dashboard", requireRole("standard"), (request, response) => {
     response.sendFile(path.join(__dirname, '..', 'private', 'dashboard.html'));
+});
+
+app.get("/billing", requireRole("standard"), (request, response) => {
+    response.sendFile(path.join(__dirname, '..', 'private', 'billing.html'));
 });
 
 app.get("/admin/dashboard", requireRole("admin"), (request, response) => {
@@ -55,6 +59,26 @@ app.get("/api/students", requireRole("admin"), async (request, response) => {
     response.send(studentCount);
 
 });
+
+app.get("/api/balance", requireRole("standard"), async (request, response) => {
+
+    const result = await pool.query(
+        'SELECT * FROM app.wallets WHERE user_id = $1', [request.session.user.id]
+    );
+
+    response.status(200).json(result.rows[0].balance);
+});
+
+app.get("/api/admin/revenue", requireRole("admin"), async (request, response) => {
+    const result = await pool.query(
+        'SELECT SUM(balance) FROM app.wallets'
+    );
+
+    const revenue = result.rows[0].sum;
+
+    response.status(200).json(revenue);
+});
+
 app.get("/logout", (request, response) => {
     request.session.destroy(() => {
         response.redirect("/index.html");
@@ -88,7 +112,7 @@ app.post("/api/login/standard", async (request, response) => {
         role: user.rows[0].role
     };
 
-    response.sendStatus(200);
+    response.status(200).send("Validated");
 });
 
 app.post("/api/login/admin", async (request, response) => {

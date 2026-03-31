@@ -6,6 +6,8 @@ const loginRoleSelect = document.getElementById('login-role');
 const loginTitle = document.getElementById('login-title');
 const headerSubtitle = document.getElementById('header-subtitle');
 const errorMessage = document.getElementById('error-message');
+const balanceTag = document.getElementById('card-balance');
+const revenueTag = document.getElementById('revenue');
 
 const loginConfig = {
     standard: {
@@ -93,6 +95,40 @@ if (loginForm) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (balanceTag) {
+        try {
+            const response = await fetch('/api/balance', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const balance = await response.json();
+            balanceTag.textContent = balance;
+            
+        } catch {
+            balanceTag.textContent = 'Unavailable';
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (revenueTag) {
+        try {
+            const response = await fetch('/api/admin/revenue', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const revenue = await response.json();
+            revenueTag.textContent = revenue;
+            
+        } catch {
+            revenueTag.textContent = 'Unavailable';
+        }
+    }
+});
 
 const error = params.get('error');
 

@@ -33,3 +33,12 @@
 
 - The placeholder login endpoints currently return `501 Not Implemented`.
 - The dashboard guards expect `request.session.user.role` to be either `standard` or `admin` once you add your login logic.
+
+## Latest Changes
+
+- Added fetch balance for each user functionality (3/30/26)
+
+## Future Changes
+
+- Implement error handling correctly
+- ^ Already implemented error query on index.mjs:42

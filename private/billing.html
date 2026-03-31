@@ -9,8 +9,9 @@
         rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
-    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/public/styles.css">
+    <title>Student Dashboard</title>
 </head>
 
 <body>
@@ -18,7 +19,7 @@
 
     <div class="brand">
         <h1>Polylearning</h1>
-        <span class="header-subtitle">Administration Panel</span>
+        <span class="header-subtitle">Student Dashboard</span>
     </div>
 
     <div class="utility">
@@ -29,29 +30,24 @@
 
     <aside>
         <section class="aside-header">
-            <h3>Management</h3>
+            <h3>My Workspace</h3>
         </section>
 
-        <div class="asideitem">Manage Users</div>
-        <div class="asideitem">Create User</div>
+        <div class="asideitem"><a href="/dashboard">My Courses</a></div>
+        <div class="asideitem"><a href="/billing">Billing</a></div>
     </aside>
 
-    <main class="dashboard-main">
+    <main class="dashboard-main billing-main">
 
         <section class="dashboard-header">
-            <h2>Billing Overview</h2>
+            <h2>Billing</h2>
         </section>
 
         <section class="dashboard-cards">
 
-            <div class="card">
-                <h3>Total Users</h3>
-                <p id="student-count"></p>
-            </div>
-
-            <div class="card">
-                <h3>System Revenue</h3>
-                <p>$<span id="revenue" class="p-fetch"> --</span></p>
+            <div class="card billing-card">
+                <h3>Balance</h3>
+                <p>$<span id="card-balance" class="p-fetch"></span></p>
             </div>
 
         </section>

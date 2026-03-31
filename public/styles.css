@@ -78,6 +78,7 @@ body {
 /* Utility Section */
 
 .utility .logout-link {
+    cursor:pointer;
     text-decoration: none;
     color: white;
     font-weight: 500;
@@ -183,13 +184,20 @@ aside {
 }
 
 aside h3{
+    font-size: 20px;
     font-weight: 600;
 }
 
 aside .asideitem {
+    color:#666;
     margin-top: 15px;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
+}
+
+aside .asideitem:hover {
+    color:#000000;
+    transition: 0.5s;
 }
 
 .dashboard-main {
@@ -230,4 +238,18 @@ aside .asideitem {
 .card p {
     font-size: 22px;
     font-weight: 600;
+}
+
+.billing-card{
+    max-width: 250px;
+}
+
+.p-fetch{
+    font-weight: 600;
+}
+
+a{
+    cursor:pointer;
+    all: unset;
+    text-decoration: none;
 }
