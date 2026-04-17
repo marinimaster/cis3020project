@@ -40,7 +40,7 @@ async function loginHandler(request, response, expectedRole) {
     const { username, password } = request.body;
 
     const user = await pool.query(
-        'SELECT * FROM app.users WHERE username = $1', [username]
+        'SELECT * FROM users WHERE username = $1', [username]
     );
 
     if (user.rows.length === 0) {
@@ -87,7 +87,7 @@ app.get("/admin/manage-users", requireRole("admin"), (request, response) => {
 app.get("/api/students", requireRole("admin"), async (request, response) => {
 
     const result = await pool.query(
-        'SELECT COUNT (*) FROM app.users WHERE role = $1', ['standard']
+        'SELECT COUNT (*) FROM users WHERE role = $1', ['standard']
     );
 
     const studentCount = result.rows[0].count;
@@ -99,7 +99,7 @@ app.get("/api/students", requireRole("admin"), async (request, response) => {
 app.get("/api/balance", requireRole("standard"), async (request, response) => {
 
     const result = await pool.query(
-        'SELECT * FROM app.wallets WHERE user_id = $1', [request.session.user.id]
+        'SELECT * FROM wallets WHERE user_id = $1', [request.session.user.id]
     );
 
     response.status(200).json(result.rows[0].balance);
@@ -107,7 +107,7 @@ app.get("/api/balance", requireRole("standard"), async (request, response) => {
 
 app.get("/api/admin/revenue", requireRole("admin"), async (request, response) => {
     const result = await pool.query(
-        'SELECT SUM(balance) FROM app.wallets'
+        'SELECT SUM(balance) FROM wallets'
     );
 
     const revenue = result.rows[0].sum;
@@ -140,7 +140,7 @@ app.post("/admin/create-user", async (request, response) => {
         await pool.query('BEGIN');
 
         const findUser = await pool.query(
-            'SELECT * FROM app.users WHERE username = $1', [username]
+            'SELECT * FROM users WHERE username = $1', [username]
         );
 
         //----------IMPORTANT TO FIND USER IF USER EXISTS FIRST-------------------------
@@ -151,7 +151,7 @@ app.post("/admin/create-user", async (request, response) => {
 
         //------------------IF IT DOESN'T, WE INSERT----------------------------
         const insertUser = await pool.query(
-            'INSERT INTO app.users (username, password) VALUES ($1, $2) RETURNING id', [username, hash]
+            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id', [username, hash]
         );
 
         //'RETURNING id' makes it so it returns the ID as soon as it's created
@@ -160,7 +160,7 @@ app.post("/admin/create-user", async (request, response) => {
         const newUserId = insertUser.rows[0].id;
 
         await pool.query(
-            'INSERT INTO app.wallets (user_id) VALUES ($1)', [newUserId]
+            'INSERT INTO wallets (user_id) VALUES ($1)', [newUserId]
         );
 
         await pool.query('COMMIT');
