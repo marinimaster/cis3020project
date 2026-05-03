@@ -99,12 +99,20 @@ app.get("/api/students", requireRole("admin"), async (request, response) => {
 
 });
 
-app.get("/api/id", requireRole("standard"), async(request, response)=> {
+app.get("/api/id", requireRole("standard"), async (request, response) => {
 
     const id = request.session.user.id;
-    
+
     response.send(id);
 })
+
+app.get("/api/due", requireRole("standard"), async (request, response) => {
+    const result = await pool.query(
+        'SELECT * FROM wallets WHERE user_id = $1', [request.session.user.id]
+    );
+
+    response.status(200).json(result.rows[0].debt);
+});
 
 app.get("/api/balance", requireRole("standard"), async (request, response) => {
 
@@ -117,7 +125,7 @@ app.get("/api/balance", requireRole("standard"), async (request, response) => {
 
 app.get("/api/admin/revenue", requireRole("admin"), async (request, response) => {
     const result = await pool.query(
-        'SELECT SUM(balance) FROM wallets'
+        'SELECT SUM(debt) FROM wallets'
     );
 
     const revenue = result.rows[0].sum;
@@ -144,6 +152,20 @@ app.post("/api/login/admin", async (request, response) => {
 app.post("/api/pay", async (request, response) => {
     const { amount } = request.body;
 
+    const parsedAmount = parseFloat(amount);
+
+    if(isNaN(parsedAmount) || parsedAmount <= 0){
+        return response.status(400).send('Invalid Payment Amount!');
+    }
+
+    try {
+        const result = await pool.query(
+            'UPDATE wallets SET balance = balance - $2, debt = debt - $2 WHERE user_id = $1 AND balance >= $2', [request.session.user.id, parsedAmount]
+        );
+
+    }catch(err){
+        console.error(err.message)
+    }
 });
 
 app.post("/admin/create-user", async (request, response) => {
@@ -159,7 +181,7 @@ app.post("/admin/create-user", async (request, response) => {
         );
 
         //----------IMPORTANT TO FIND USER IF USER EXISTS FIRST-------------------------
-        if(findUser.rows.length > 0){
+        if (findUser.rows.length > 0) {
             await pool.query('ROLLBACK');
             return response.status(403).json('User already exists');
         }
@@ -179,7 +201,7 @@ app.post("/admin/create-user", async (request, response) => {
         );
 
         await pool.query('COMMIT');
-        
+
         return response.status(200).json('User Created')
     }
     catch (error) {

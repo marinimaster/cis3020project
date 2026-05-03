@@ -12,6 +12,7 @@ const createUserForm = document.getElementById('create-user-form');
 const paymentForm = document.getElementById('payment-form');
 const paidTag = document.getElementById('payment-received');
 const userIdTag = document.getElementById('user-id');
+const amountDueTag = document.getElementById('amount-due');
 
 const loginConfig = {
     standard: {
@@ -55,7 +56,6 @@ function updateLoginMode() {
 document.addEventListener('DOMContentLoaded', async () => {
     if (paymentForm) {
         paymentForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
 
             const formData = new FormData(paymentForm);
             const data = Object.fromEntries(formData.entries());
@@ -101,6 +101,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch {
             userIdTag.textContent = 'Unavailable';
+        }
+    }
+
+    if (amountDueTag) {
+        try {
+            const response = await fetch('/api/due', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const amountDue = await response.json();
+            amountDueTag.textContent = amountDue;
+
+        } catch {
+            amountDueTag.textContent = 'Unavailable';
         }
     }
 
