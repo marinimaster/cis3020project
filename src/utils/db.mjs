@@ -1,10 +1,11 @@
 import { Pool } from "pg";
+import 'dotenv/config';
 
 const pool = new Pool({
-    user: 'marini',
-    host: 'dpg-d7cgb0hj2pic73bsgm10-a.oregon-postgres.render.com',
-    database: 'poly_database_p21f',
-    password: 'K8T2DkKWMF6ZS6tpcB6aGxdU12ZF81Iv',
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
     port: 5432,
     ssl: true
 });

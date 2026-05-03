@@ -15,18 +15,18 @@
 </head>
 
 <body>
-<header class="app-header">
+    <header class="app-header">
 
-    <div class="brand">
-        <h1>Polylearning</h1>
-        <span class="header-subtitle">Student Dashboard</span>
-    </div>
+        <div class="brand">
+            <h1>Polylearning</h1>
+            <span class="header-subtitle">Student Dashboard</span>
+        </div>
 
-    <div class="utility">
-        <a href="/logout" class="logout-link">Logout</a>
-    </div>
+        <div class="utility">
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
 
-</header>
+    </header>
 
     <aside>
         <section class="aside-header">
@@ -40,7 +40,7 @@
     <main class="dashboard-main billing-main">
 
         <section class="dashboard-header">
-            <h2>Billing</h2>
+            <h2>Billing for user ID: <span id="user-id"></span></h2>
         </section>
 
         <section class="dashboard-cards">
@@ -51,8 +51,23 @@
             </div>
 
             <div class="card billing-card">
+                <h3>Make a Payment</h3>
+                <form method="POST" id="payment-form" action="/api/pay">
+
+                    <label for="amount">Payment amount</label>
+                    <input type="number" name="amount" id="amountInput" placeholder="Enter amount">
+
+                    <input type="submit" value="Pay">
+
+                </form>
+
+                <p><span id="payment-received"></span></p>
+
+            </div>
+
+            <div class="card billing-card">
                 <h3>Due</h3>
-                <p>$<span id="card-due" class="p-fetch"></span></p>
+                <p>$<span id="card-due" class="p-fetch">NaN</span></p>
             </div>
 
 

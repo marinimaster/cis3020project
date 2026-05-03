@@ -214,9 +214,9 @@ aside .asideitem:hover {
 
 .dashboard-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr));
     gap: 25px;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .card {
@@ -266,6 +266,21 @@ a{
 }
 
 #create-user-form input{
+    height: 30px;
+    width: 100%;
+    padding: 0 10px;
+
+    background-color: #f8f8f8;
+    border: 2px solid rgb(240, 240, 240);
+}
+
+#payment-form{
+    gap: 3px;
+    display: flex;
+    flex-direction: column;
+}
+
+#payment-form input{
     height: 30px;
     width: 100%;
     padding: 0 10px;

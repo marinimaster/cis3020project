@@ -6,3 +6,5 @@ export async function hashPassword(password){
 
     return hashedPassword;
 }
+
+console.log(await hashPassword('1234'));

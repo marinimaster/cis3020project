@@ -8,7 +8,10 @@ const headerSubtitle = document.getElementById('header-subtitle');
 const errorMessage = document.getElementById('error-message');
 const balanceTag = document.getElementById('card-balance');
 const revenueTag = document.getElementById('revenue');
-const createUserForm = document.getElementById('create-user-form')
+const createUserForm = document.getElementById('create-user-form');
+const paymentForm = document.getElementById('payment-form');
+const paidTag = document.getElementById('payment-received');
+const userIdTag = document.getElementById('user-id');
 
 const loginConfig = {
     standard: {
@@ -50,6 +53,25 @@ function updateLoginMode() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(paymentForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch("/api/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json " },
+                body: JSON.stringify(data)
+            });
+            const paymentMade = await response.json();
+
+            paidTag.textContent = paymentMade;
+
+        });
+    };
+
     if (createUserForm) {
         createUserForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -65,6 +87,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             console.log(await response.json());
         });
+    }
+
+    if (userIdTag) {
+        try {
+            const response = await fetch('/api/id', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const id = await response.json();
+            userIdTag.textContent = id;
+
+        } catch {
+            userIdTag.textContent = 'Unavailable';
+        }
     }
 
     if (studentCountTag) {

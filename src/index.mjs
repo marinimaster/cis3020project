@@ -9,7 +9,7 @@ import tls from 'tls';
 import fs from 'fs';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -99,6 +99,13 @@ app.get("/api/students", requireRole("admin"), async (request, response) => {
 
 });
 
+app.get("/api/id", requireRole("standard"), async(request, response)=> {
+
+    const id = request.session.user.id;
+    
+    response.send(id);
+})
+
 app.get("/api/balance", requireRole("standard"), async (request, response) => {
 
     const result = await pool.query(
@@ -132,6 +139,11 @@ app.post("/api/login/standard", async (request, response) => {
 
 app.post("/api/login/admin", async (request, response) => {
     loginHandler(request, response, 'admin');
+});
+
+app.post("/api/pay", async (request, response) => {
+    const { amount } = request.body;
+
 });
 
 app.post("/admin/create-user", async (request, response) => {
@@ -175,6 +187,13 @@ app.post("/admin/create-user", async (request, response) => {
         console.error(error);
         response.status(500).json('Server Error');
     }
+});
+
+https.createServer({
+    key: fs.readFileSync('poly-key.pem'),
+    cert: fs.readFileSync('poly-cert.pem')
+}, app).listen(443, () => {
+    console.log('Listening on port 443');
 });
 
 app.listen(PORT, () => {

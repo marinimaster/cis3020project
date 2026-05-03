@@ -1,3 +1,7 @@
 node_modules/
 .env
 .DS_Store
+poly-cert.pem
+poly-key.pem
+poly-csr.pem
+poly.pfx
